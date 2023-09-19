@@ -137,11 +137,12 @@ func TestBitValue_codecov(t *testing.T) {
 	for _, kind := range testMap {
 		instance := New(kind)
 		size := instance.Size()
+		_ = kind.String()
+		_ = bits.Int()
 		for i := 0; i < size; i++ {
-			bits.Shift(size << i)
-			bits.Int()
-			bits.Positive(size << i)
-			bits.Unshift(size << i)
+			instance.Shift(size << i)
+			instance.Positive(size << i)
+			instance.Unshift(size << i)
 			switch instance.Value().(type) {
 			case *uint8:
 				_, _ = toInt(size)
