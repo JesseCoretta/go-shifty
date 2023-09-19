@@ -1,2 +1,5 @@
-# go-shifty
-Package shifty offers quick and extensible additive bit shifting
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/JesseCoretta/go-shifty)](https://goreportcard.com/report/github.com/JesseCoretta/go-shifty) [![Go Reference](https://pkg.go.dev/badge/github.com/JesseCoretta/go-shifty.svg)](https://pkg.go.dev/github.com/JesseCoretta/go-shifty) ![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat) [![codecov](https://codecov.io/gh/JesseCoretta/go-shifty/graph/badge.svg?token=2MHIRM36MS)](https://codecov.io/gh/JesseCoretta/go-shifty) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/JesseCoretta/go-shifty/issues) ![Static Badge](https://img.shields.io/badge/experimental-blue?logoColor=blue&label=%F0%9F%A7%AA%20%F0%9F%94%AC&labelColor=blue&color=gray) ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/jessecoretta/go-shifty/go.yml?event=push) ![author](https://img.shields.io/badge/author-Jesse_Coretta-darkred?label=%F0%9F%94%BA&labelColor=indigo&color=maroon&link=https%3A%2F%2Fgithub.com%2FJesseCoretta)
+
+## go-shifty
+Package shifty offers quick and extensible additive bit shifting for simple configuration values, such as those describing a combination of log levels.
