@@ -121,22 +121,22 @@ func ExampleBitValue_Positive() {
 }
 
 func ExampleBitValue_SetNamesMap() {
-        // user-defined shift values
-        bits := New(Uint8)
+	// user-defined shift values
+	bits := New(Uint8)
 
-        type B uint8
-        const (
-                Bopt1 B = 1 << iota //   1
-                Bopt2               //   2
-                Bopt3               //   4
-                Bopt4               //   8
-                Bopt5               //  16
-                Bopt6               //  32
-                Bopt7               //  64
-                Bopt8               // 128      // go no higher (else, overflow uint8)
-        )
+	type B uint8
+	const (
+		Bopt1 B = 1 << iota //   1
+		Bopt2               //   2
+		Bopt3               //   4
+		Bopt4               //   8
+		Bopt5               //  16
+		Bopt6               //  32
+		Bopt7               //  64
+		Bopt8               // 128      // go no higher (else, overflow uint8)
+	)
 
-        // create a const->name map using
+	// create a const->name map using
 	// the above const vals by way of
 	// incremental shifts. Note that
 	// we could have just as easily
@@ -145,8 +145,8 @@ func ExampleBitValue_SetNamesMap() {
 	// succinct.
 	var m map[int]string = make(map[int]string, 0)
 	for i := 0; i < bits.Size(); i++ {
-		str := fmt.Sprintf("bit_option%d", i+1)	// inc. label number since we start at zero
-		bv := 1<<i
+		str := fmt.Sprintf("bit_option%d", i+1) // inc. label number since we start at zero
+		bv := 1 << i
 		m[bv] = str
 	}
 
@@ -156,32 +156,32 @@ func ExampleBitValue_SetNamesMap() {
 	// now shift by string name instead
 	// of a constant directly :)
 	name := `bit_option6`
-        bits.Shift(name)
+	bits.Shift(name)
 
-        fmt.Printf("Value contains %s: %t (val:%d)", name, bits.Positive(name), bits.Int())
-        // Output: Value contains bit_option6: true (val:32)
+	fmt.Printf("Value contains %s: %t (val:%d)", name, bits.Positive(name), bits.Int())
+	// Output: Value contains bit_option6: true (val:32)
 }
 
 func ExampleBitValue_None() {
 	bits := New(Uint8)
-	bits.Shift(8<<1)
-	bits.None()	// annihilate any value
+	bits.Shift(8 << 1)
+	bits.None() // annihilate any value
 
 	fmt.Printf("%d", bits.Int())
 	// Output: 0
 }
 
 func ExampleBitValue_All() {
-        bits := New(Uint16)
-        bits.All()	// shift EVERYTHING
+	bits := New(Uint16)
+	bits.All() // shift EVERYTHING
 
-        fmt.Printf("%d", bits.Int())
-        // Output: 65535
+	fmt.Printf("%d", bits.Int())
+	// Output: 65535
 }
 
 func ExampleBitValue_NamesMap() {
-        bits := New(Uint8)
-        fmt.Printf("%T", bits.NamesMap()) // note this is a nil map
+	bits := New(Uint8)
+	fmt.Printf("%T", bits.NamesMap()) // note this is a nil map
 	// Output: map[int]string
 }
 

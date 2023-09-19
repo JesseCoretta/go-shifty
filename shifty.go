@@ -79,9 +79,9 @@ type.
 New instances of this type are created using the New package-level function.
 */
 type BitValue struct {
-	k Kind  // user-selected Kind
-	s uint8 // size (in bits: 8, 16 or 32)
-	v any   // allocated instance (as a ptr), per Kind
+	k Kind           // user-selected Kind
+	s uint8          // size (in bits: 8, 16 or 32)
+	v any            // allocated instance (as a ptr), per Kind
 	m map[int]string // string names for values, optional
 }
 
@@ -187,8 +187,8 @@ will set the underlying integer value to ^uintN(0) (allocated
 maximum).
 */
 func (r BitValue) All() BitValue {
-        r.Shift(r.Max())
-        return r
+	r.Shift(r.Max())
+	return r
 }
 
 /*
@@ -219,7 +219,7 @@ func (r BitValue) Unshift(x ...any) BitValue {
 
 /*
 Positive returns a Boolean value indicative of whether input value
-x's bits are set within the receiver. Negation (!) implies negative, 
+x's bits are set within the receiver. Negation (!) implies negative,
 or 'bit not set'.
 */
 func (r BitValue) Positive(x any) (posi bool) {
@@ -430,7 +430,7 @@ func (r BitValue) verifyShiftValue(x any) (X int, ok bool) {
 	// if the input value was a string, try
 	// to resolve it to an int value ...
 	if str, asserted := x.(string); asserted {
-		 x = r.strIndex(str)
+		x = r.strIndex(str)
 	}
 
 	if X, ok = toInt(x); ok {
@@ -449,7 +449,7 @@ func (r BitValue) strIndex(x string) (idx int) {
 	idx = -1
 
 	for k, v := range r.m {
-		if strings.EqualFold(v,x) {
+		if strings.EqualFold(v, x) {
 			idx = k
 		}
 	}
