@@ -136,7 +136,7 @@ func TestBitValue_codecov(t *testing.T) {
 	}
 
 	bits = New(Uint8)
-	bits.Shift(256)
+	bits.Shift(bits.Max())
 	bits.Shift(8 << 8)
 	bits.Shift(8 << 1)
 	bits.Positive(8 << 2)
@@ -154,6 +154,8 @@ func TestBitValue_codecov(t *testing.T) {
 			instance.Shift(size << i)
 			instance.Positive(size << i)
 			instance.Unshift(size << i)
+			instance.Shift(instance.Max())
+			instance.Unshift(instance.Max())
 			switch instance.Value().(type) {
 			case *uint8:
 				_, _ = toInt(uint8(size))
