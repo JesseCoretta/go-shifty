@@ -5,6 +5,8 @@ import (
 	"testing"
 )
 
+var testMap map[int]Kind
+
 func ExampleNew() {
 	bits := New(Uint16)
 	fmt.Printf("%T size %d, max %d", bits, bits.Size(), bits.Max())
@@ -131,4 +133,31 @@ func TestBitValue_codecov(t *testing.T) {
 	bits.Kind()
 	bits.Int()
 	bits.Value()
+
+	for _, kind := range testMap {
+		instance := New(kind)
+		size := instance.Size()
+		for i := 0; i < size; i++ {
+			bits.Shift(size << i)
+			bits.Int()
+			bits.Positive(size << i)
+			bits.Unshift(size << i)
+			switch instance.Value().(type) {
+			case *uint8:
+				_, _ = toInt(size)
+			case *uint16:
+				_, _ = toInt(uint16(size))
+			case *uint32:
+				_, _ = toInt(uint32(size))
+			}
+		}
+	}
+}
+
+func init() {
+	testMap = map[int]Kind{
+		8:  Uint8,
+		16: Uint16,
+		32: Uint32,
+	}
 }
