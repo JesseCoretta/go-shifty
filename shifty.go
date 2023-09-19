@@ -5,6 +5,10 @@ import (
 	"strconv"
 )
 
+/*
+Kind represents the specific unsigned integer type
+selected for use within instances of BitValue.
+*/
 type Kind uint8
 
 const (
@@ -14,16 +18,64 @@ const (
 	Uint32             // 0x3
 )
 
+/*
+String returns the string name of the receiver instance.
+*/
+func (r Kind) String() (k string) {
+	k = `unknown`
+
+	switch r {
+	case Uint8:
+		k = `uint8`
+	case Uint16:
+		k = `uint16`
+	case Uint32:
+		k = `uint32`
+	}
+
+	return
+}
+
+/*
+Size returns the bit size of the receiver.
+*/
+func (r Kind) Size() (size int) {
+	size = 0
+
+	switch r {
+	case Uint8:
+		size = 8
+	case Uint16:
+		size = 16
+	case Uint32:
+		size = 32
+	}
+
+	return
+}
+
+/*
+BitValue contains the allocated value type, a Kind and a bitsize per value type. Shift and Unshift
+operations may be conducted against instances of this type. New instances of this type are created
+using the New package-level function.
+*/
 type BitValue struct {
 	k Kind  // avoid unnecessary type assertion during routine operations
 	s uint8 // size (bits, 8 to 32), set manually so we don't need reflect for 'Size'
 	v any   // ptr to uint8 or whatever is being used, per Kind (t)
 }
 
+/*
+Value returns the unasserted instance of any from
+within the receiver instance.
+*/
 func (r BitValue) Value() any {
 	return r.v
 }
 
+/*
+Int returns the integer form of the receiver value.
+*/
 func (r BitValue) Int() (i int) {
 	switch r.k {
 	case Uint8:
@@ -37,10 +89,18 @@ func (r BitValue) Int() (i int) {
 	return
 }
 
+/*
+Kind returns the instance of Kind assigned to the receiver
+instance.
+*/
 func (r BitValue) Kind() Kind {
 	return r.k
 }
 
+/*
+Shift shall left-shift the bits within the receiver to include
+input value(s) x.
+*/
 func (r BitValue) Shift(x ...any) {
 	for i := 0; i < len(x); i++ {
 		if X, ok := r.verifyShiftValue(x[i]); ok {
@@ -49,6 +109,10 @@ func (r BitValue) Shift(x ...any) {
 	}
 }
 
+/*
+Unshift shall right-shift the bits within the receiver to remove
+input value(s) x.
+*/
 func (r BitValue) Unshift(x ...any) {
 	for i := 0; i < len(x); i++ {
 		if X, ok := r.verifyShiftValue(x[i]); ok {
@@ -57,6 +121,10 @@ func (r BitValue) Unshift(x ...any) {
 	}
 }
 
+/*
+Positive returns a Boolean value indicative of whether input value
+x's bits are set within the receiver.
+*/
 func (r BitValue) Positive(x any) (posi bool) {
 	if X, ok := r.verifyShiftValue(x); ok {
 		posi = r.positive(X)
@@ -132,6 +200,10 @@ func toInt(x any) (v int, ok bool) {
 	return
 }
 
+/*
+Min returns eight (8), sixteen (16) or thirty-two (32), each
+of which indicate the maximum bitsize of the receiver.
+*/
 func (r BitValue) Max() (max int) {
 	switch r.k {
 	case Uint8:
@@ -145,17 +217,24 @@ func (r BitValue) Max() (max int) {
 	return
 }
 
+/*
+Size returns the underlying bitsize of the receiver.
+*/
+func (r BitValue) Size() (size int) {
+	return r.k.Size()
+}
+
+/*
+Min returns zero (0), which indicates the lowest permitted
+value within the receiver.
+*/
 func (r BitValue) Min() (min int) {
 	return 0
 }
 
 func (r BitValue) verifyShiftValue(x any) (X int, ok bool) {
-	if X, ok = toInt(x); !ok {
-		return
-	}
-
-	if r.Min() <= X && X <= r.Max() {
-		ok = true
+	if X, ok = toInt(x); ok {
+		ok = r.Min() <= X && X <= r.Max()
 	}
 
 	return
@@ -166,15 +245,15 @@ func New(k Kind) (bv BitValue) {
 
 	switch k {
 	case Uint8:
-		bv.s = 8
+		bv.s = uint8(k.Size())
 		bv.v = new(uint8)
 
 	case Uint16:
-		bv.s = 16
+		bv.s = uint8(k.Size())
 		bv.v = new(uint16)
 
 	case Uint32:
-		bv.s = 32
+		bv.s = uint8(k.Size())
 		bv.v = new(uint32)
 	}
 
