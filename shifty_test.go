@@ -120,6 +120,71 @@ func ExampleBitValue_Positive() {
 	// Output: Value contains B-options #6 (32): true
 }
 
+func ExampleBitValue_SetNamesMap() {
+        // user-defined shift values
+        bits := New(Uint8)
+
+        type B uint8
+        const (
+                Bopt1 B = 1 << iota //   1
+                Bopt2               //   2
+                Bopt3               //   4
+                Bopt4               //   8
+                Bopt5               //  16
+                Bopt6               //  32
+                Bopt7               //  64
+                Bopt8               // 128      // go no higher (else, overflow uint8)
+        )
+
+        // create a const->name map using
+	// the above const vals by way of
+	// incremental shifts. Note that
+	// we could have just as easily
+	// built the map manually, though
+	// but looping is neater and more
+	// succinct.
+	var m map[int]string = make(map[int]string, 0)
+	for i := 0; i < bits.Size(); i++ {
+		str := fmt.Sprintf("bit_option%d", i+1)	// inc. label number since we start at zero
+		bv := 1<<i
+		m[bv] = str
+	}
+
+	// assign map to receiver
+	bits.SetNamesMap(m)
+
+	// now shift by string name instead
+	// of a constant directly :)
+	name := `bit_option6`
+        bits.Shift(name)
+
+        fmt.Printf("Value contains %s: %t (val:%d)", name, bits.Positive(name), bits.Int())
+        // Output: Value contains bit_option6: true (val:32)
+}
+
+func ExampleBitValue_None() {
+	bits := New(Uint8)
+	bits.Shift(8<<1)
+	bits.None()	// annihilate any value
+
+	fmt.Printf("%d", bits.Int())
+	// Output: 0
+}
+
+func ExampleBitValue_All() {
+        bits := New(Uint16)
+        bits.All()	// shift EVERYTHING
+
+        fmt.Printf("%d", bits.Int())
+        // Output: 65535
+}
+
+func ExampleBitValue_NamesMap() {
+        bits := New(Uint8)
+        fmt.Printf("%T", bits.NamesMap()) // note this is a nil map
+	// Output: map[int]string
+}
+
 func TestBitValue_codecov(t *testing.T) {
 	var bits BitValue
 	bits.Kind()

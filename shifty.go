@@ -3,6 +3,7 @@ package shifty
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 /*
@@ -79,8 +80,9 @@ New instances of this type are created using the New package-level function.
 */
 type BitValue struct {
 	k Kind  // user-selected Kind
-	s uint8 // size (bits, 8 to 32)
+	s uint8 // size (in bits: 8, 16 or 32)
 	v any   // allocated instance (as a ptr), per Kind
+	m map[int]string // string names for values, optional
 }
 
 /*
@@ -91,6 +93,28 @@ not yet been initialized (hint: see New function).
 */
 func (r BitValue) Value() any {
 	return r.v
+}
+
+/*
+NamesMap returns the instance of map[int]string found
+within the receiver instance, else nil is returned.
+
+The map is used to resolve string names to shift values
+(e.g.: consts).
+*/
+func (r BitValue) NamesMap() map[int]string {
+	return r.m
+}
+
+/*
+SetNamesMap assigns an instance of map[int]string to
+the receiver. The instance, if non-nil, shall be used
+to resolve string names to shift values (e.g.: consts).
+
+Case is not significant in the string matching process.
+*/
+func (r *BitValue) SetNamesMap(m map[int]string) {
+	r.m = m
 }
 
 /*
@@ -149,6 +173,25 @@ func (r BitValue) Shift(x ...any) BitValue {
 }
 
 /*
+None is a convenience method that calls r.Unshift(r.Max()), which will
+set the underlying integer value to zero (0) (allocated minimum).
+*/
+func (r BitValue) None() BitValue {
+	r.Unshift(r.Max())
+	return r
+}
+
+/*
+All is a convenience method that calls r.Shift(r.Max()), which
+will set the underlying integer value to ^uintN(0) (allocated
+maximum).
+*/
+func (r BitValue) All() BitValue {
+        r.Shift(r.Max())
+        return r
+}
+
+/*
 Unshift shall right-shift the bits within the receiver to remove
 input value(s) x.
 
@@ -176,7 +219,8 @@ func (r BitValue) Unshift(x ...any) BitValue {
 
 /*
 Positive returns a Boolean value indicative of whether input value
-x's bits are set within the receiver.
+x's bits are set within the receiver. Negation (!) implies negative, 
+or 'bit not set'.
 */
 func (r BitValue) Positive(x any) (posi bool) {
 	if X, ok := r.verifyShiftValue(x); ok {
@@ -378,10 +422,36 @@ integer. Assuming that integer is not out-of-bounds (in terms of
 minimum or maximum value magnitudes permitted) for the underlying
 type instance, it is returned alongside a success-indicative Boolean
 value.
+
+This method also resolves a string name to a known int bit value,
+if set within the NamesMap within the receiver.
 */
 func (r BitValue) verifyShiftValue(x any) (X int, ok bool) {
+	// if the input value was a string, try
+	// to resolve it to an int value ...
+	if str, asserted := x.(string); asserted {
+		 x = r.strIndex(str)
+	}
+
 	if X, ok = toInt(x); ok {
 		ok = r.Min() <= X && X <= r.Max()
+	}
+
+	return
+}
+
+/*
+strIndex returns the integer index for the specified bitvalue,
+if found within the underlying names map. Otherwise, -1 is
+returned.
+*/
+func (r BitValue) strIndex(x string) (idx int) {
+	idx = -1
+
+	for k, v := range r.m {
+		if strings.EqualFold(v,x) {
+			idx = k
+		}
 	}
 
 	return
