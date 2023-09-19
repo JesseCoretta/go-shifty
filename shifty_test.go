@@ -53,10 +53,21 @@ func ExampleBitValue_Max_for32bit() {
 }
 
 func ExampleBitValue_Int() {
-	bits := New(Uint32)
-	bits.Shift(bits.Max())
+	bits := New(Uint8)
+	bits.Shift(2, 4, 32)
 	fmt.Printf("%d", bits.Int())
-	// Output: 4294967295
+	// Output: 38
+}
+
+func ExampleBitValue_Int_mixed() {
+	var ints []int
+	for i := 0; i < 3; i++ {
+		bits := New(Kind(i + 1))
+		bits.Shift(bits.Size() << i)
+		ints = append(ints, bits.Int())
+	}
+	fmt.Printf("%v", ints)
+	// Output: [8 32 128]
 }
 
 func ExampleBitValue_Value() {
@@ -145,7 +156,7 @@ func TestBitValue_codecov(t *testing.T) {
 			instance.Unshift(size << i)
 			switch instance.Value().(type) {
 			case *uint8:
-				_, _ = toInt(size)
+				_, _ = toInt(uint8(size))
 			case *uint16:
 				_, _ = toInt(uint16(size))
 			case *uint32:
