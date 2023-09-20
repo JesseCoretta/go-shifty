@@ -25,12 +25,12 @@ const (
 	// Trace, Debug, Warning, etc.
 	//
 	// When defining constants, it is very important you limit their
-	// enumeration to numbers less than (and NOT equal) to the return
+	// enumeration to numbers less than (and NOT equal to) the return
 	// value of BitValue.Max(). Never list that number in an iota
 	// enumerator like as shown below. The reason for this is because
 	// all of the other numbers shall sum to that value when all value
 	// are selected together, therefore defining one would result in an
-	// overflow.
+	// overflow. To set ALL options, see the BitValue.All method.
         UserOption1  Option = 1 << iota //     1
         UserOption2                     //     2
         UserOption3                     //     4
